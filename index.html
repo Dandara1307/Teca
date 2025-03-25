@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TECA MATRIZ - Login</title>
+    <link rel="icon" type="image/x-icon" href="/icon.svg" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+        header {
+            background-color: #e60000;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            color: #333;
+        }
+        .container input, .container select, .container textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .container button {
+            background-color: #e60000;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container button:hover {
+            background-color: #b50000;
+        }
+        h2 {
+            color: #e60000;
+        }
+        .btn-link {
+            text-decoration: none;
+            color: #e60000;
+            font-size: 14px;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+        .btn-back {
+            background-color: #333;
+            color: white;
+            width: 100%;
+        }
+        .btn-back:hover {
+            background-color: #555;
+        }
+        /* Responsividade */
+        @media (max-width: 600px) {
+            header {
+                font-size: 16px;
+            }
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>TECA MATRIZ</h1>
+    <h3>Segurança e Saúde em Primeiro Lugar</h3>
+</header>
+
+<!-- Tela de Login -->
+<div id="login" class="container">
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Digite seu e-mail" />
+    <input type="password" id="loginPassword" placeholder="Digite sua senha" />
+    <button onclick="login()">Entrar</button>
+    <p>Não tem conta? <a href="javascript:void(0);" class="btn-link" onclick="showRegister()">Cadastre-se</a></p>
+</div>
+
+<!-- Tela de Cadastro -->
+<div id="register" class="container hidden">
+    <h2>Cadastro</h2>
+    <input type="text" id="registerName" placeholder="Nome Completo" />
+    <input type="email" id="registerEmail" placeholder="E-mail" />
+    <input type="password" id="registerPassword" placeholder="Senha" />
+    <input type="password" id="registerConfirmPassword" placeholder="Confirmar Senha" />
+    <button onclick="register()">Cadastrar</button>
+    <button class="btn-back" onclick="showLogin()">Voltar ao Login</button>
+</div>
+
+<!-- Tela Principal do App (Controlos) -->
+<div id="app" class="container hidden">
+    <h2>Bem-vindo ao TECA MATRIZ</h2>
+    
+    <!-- Controle de Turno -->
+    <h3>Controle de Turno</h3>
+    <label for="turn">Escolha o Turno:</label>
+    <select id="turn">
+        <option value="T1">T1</option>
+        <option value="T2">T2</option>
+        <option value="T3">T3</option>
+    </select>
+
+    <!-- Controle de Produção -->
+    <h3>Controle de Produção</h3>
+    <label for="productionStatus">Status de Produção:</label>
+    <select id="productionStatus">
+        <option value="Dentro da Meta">Dentro da Meta</option>
+        <option value="Fora da Meta">Fora da Meta</option>
+    </select>
+
+    <label for="loadedCars">Carros Carregados:</label>
+    <input type="number" id="loadedCars" placeholder="Número de Carros Carregados" />
+
+    <label for="unloadedCars">Carros Não Carregados:</label>
+    <input type="number" id="unloadedCars" placeholder="Número de Carros Não Carregados" />
+
+    <label for="volumeIn">Volume IN:</label>
+    <input type="number" id="volumeIn" placeholder="Volume IN" />
+
+    <label for="volumeOut">Volume OUT:</label>
+    <input type="number" id="volumeOut" placeholder="Volume OUT" />
+
+    <!-- Avaliação do 5S -->
+    <h3>Avaliação do 5S</h3>
+    <label for="fiveSStatus">Qual a situação do 5S deixado pelo turno anterior?</label>
+    <select id="fiveSStatus">
+        <option value="Bom">(01) Bom</option>
+        <option value="Razoável">(02) Razoável</option>
+        <option value="Ruim">(03) Ruim</option>
+    </select>
+
+    <label for="tasks">Observações e Tarefas:</label>
+    <textarea id="tasks" placeholder="Liste as tarefas do dia..."></textarea>
+
+    <label for="previousShiftMessage">Recado do Turno Anterior:</label>
+    <textarea id="previousShiftMessage" placeholder="Mensagens do turno anterior..."></textarea>
+
+    <label for="pendingUrgencies">Pendências e Urgências:</label>
+    <textarea id="pendingUrgencies" placeholder="Liste as pendências e urgências..."></textarea>
+
+    <label for="occurrences">Ocorrências Relevantes:</label>
+    <textarea id="occurrences" placeholder="Registre ocorrências importantes..."></textarea>
+
+    <p>Data: <span id="currentDate">25/03/2025</span></p>
+    <p>Horário: <span id="currentTime">14:29:35</span></p>
+
+    <label for="leaderSignature">Assinatura do Líder:</label>
+    <input type="text" id="leaderSignature" placeholder="Digite seu nome para assinar" />
+
+    <button onclick="saveData()">Salvar Dados</button>
+    <p id="dataSavedMessage" class="hidden">Dados Registrados</p>
+
+    <button onclick="exportToExcel()">Exportar para Excel</button>
+    <button onclick="logout()">Sair</button>
+</div>
+
+<script>
+    // Exibe a tela de Login
+    function showLogin() {
+        document.getElementById('login').classList.remove('hidden');
+        document.getElementById('register').classList.add('hidden');
+        document.getElementById('app').classList.add('hidden');
+    }
+
+    // Exibe a tela de Cadastro
+    function showRegister() {
+        document.getElementById('login').classList.add('hidden');
+        document.getElementById('register').classList.remove('hidden');
+    }
+
+    // Função de Login (simulada)
+    function login() {
+        const email = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+
+        if (email && password) {
+            alert('Login bem-sucedido!');
+            document.getElementById('login').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+        } else {
+            alert('Por favor, preencha todos os campos!');
+        }
+    }
+
+    // Função de Cadastro (simulada)
+    function register() {
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+        if (password === confirmPassword && name && email && password) {
+            alert('Cadastro bem-sucedido!');
+            showLogin();
+        } else {
+            alert('Por favor, preencha todos os campos corretamente!');
+        }
+    }
+
+    // Função para salvar os dados
+    function saveData() {
+        const tasks = document.getElementById('tasks').value;
+        const previousShiftMessage = document.getElementById('previousShiftMessage').value;
+        const pendingUrgencies = document.getElementById('pendingUrgencies').value;
+        const occurrences = document.getElementById('occurrences').value;
+        const leaderSignature = document.getElementById('leaderSignature').value;
+
+        if (tasks && previousShiftMessage && pendingUrgencies && occurrences && leaderSignature) {
+            document.getElementById('dataSavedMessage').classList.remove('hidden');
+        } else {
+            alert('Por favor, preencha todos os campos!');
+        }
+    }
+
+    // Função para exportar para Excel (simulada)
+    function exportToExcel() {
+        alert('Função de exportação para Excel (simulada)');
+    }
+
+    // Logout (volta para a tela de login)
+    function logout() {
+        showLogin();
+    }
+</script>
+
+</body>
+</html>
